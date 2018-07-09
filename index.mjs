@@ -1,6 +1,6 @@
-const VERSION = 1;
+export const VERSION = 1;
 
-class ExamplePlugin {
+export default class ExamplePlugin {
     constructor() {
         this.connection = false;
         this.fetchTimeout;
@@ -41,8 +41,3 @@ class ExamplePlugin {
         clearTimeout(this.fetchTimeout);
     }
 }
-
-module.exports = {
-    plugin: ExamplePlugin,
-    VERSION
-};
