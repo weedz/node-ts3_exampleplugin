@@ -1,9 +1,12 @@
+import Plugin from '../../lib/Plugin'
+
 export const VERSION = 1;
 
-export default class ExamplePlugin {
+export default class ExamplePlugin extends Plugin {
     constructor() {
-        this.connection = false;
+        super();
         this.fetchTimeout;
+        this.fetchClientInfo = this.fetchClientInfo.bind(this);
     }
     connected(connection) {
         this.connection = connection;
@@ -19,20 +22,19 @@ export default class ExamplePlugin {
     setup() {
         console.log("We in there bois!");
         // get clientlist and info every 5 second
-
-        const connection = this.connection;
-
-        const fetchClientInfo = async () => {
-            const clientList = await connection.store.fetchList('clientlist');
-            console.log(`Clients: ${clientList.length}`);
-            for (let client of clientList) {
-                const data = await connection.store.fetchInfo('clientinfo', 'clid', client.clid);
-                console.log(`ExamplePlugin - client (${client.clid}): ${data.client_nickname}`);
-            }
-            this.fetchTimeout = setTimeout(fetchClientInfo, 1000);
-        }
-        this.fetchTimeout = setTimeout(fetchClientInfo, 1000);
+        this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
     }
+
+    async fetchClientInfo() {
+        const clientList = await this.connection.store.fetchList('clientlist');
+        console.log(`Clients: ${clientList.length}`);
+        for (let client of clientList) {
+            const data = await this.connection.store.fetchInfo('clientinfo', 'clid', client.clid);
+            console.log(`\tExamplePlugin - client (${client.clid}): ${data.client_nickname}`);
+        }
+        this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
+    }
+
     reload() {
         console.log("ExamplePlugin - Already loaded!");
     }
