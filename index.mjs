@@ -9,7 +9,7 @@ export default class ExamplePlugin extends Plugin {
         this.fetchClientInfo = this.fetchClientInfo.bind(this);
     }
     connected(connection) {
-        this.connection = connection;
+        super.connected(connection);
         Promise.all([
             this.connection.send('use', [1], {mustReturnOK: true, noOutput: true}),
             this.connection.send('whoami', undefined, {mustReturnOK: true, noOutput: true})
@@ -19,7 +19,7 @@ export default class ExamplePlugin extends Plugin {
             console.log("ExamplePlugin - Catch: ", data);
         });
     }
-    setup() {
+    init() {
         console.log("We in there bois!");
         // get clientlist and info every 5 second
         this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
