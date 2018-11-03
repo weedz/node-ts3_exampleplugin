@@ -10,7 +10,6 @@ export default class ExamplePlugin extends Plugin {
         this.fetchClientInfo = this.fetchClientInfo.bind(this);
     }
     connected(connection) {
-        super.connected(connection);
         Promise.all([
             this.connection.send('use', [1], {mustReturnOK: true, noOutput: true}),
             this.connection.send('whoami', undefined, {mustReturnOK: true, noOutput: true})
@@ -31,7 +30,7 @@ export default class ExamplePlugin extends Plugin {
         Log(`Clients: ${clientList.length}`);
         for (let client of clientList) {
             const data = await this.connection.store.fetchInfo('clientinfo', 'clid', client.clid);
-            Log(`\tExamplePlugin - client (${client.clid}): ${data.client_nickname}`);
+            process.stdout.write(`\tExamplePlugin - client (${client.clid}): ${data.client_nickname}\n`);
         }
         this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
     }
