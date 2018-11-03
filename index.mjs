@@ -1,4 +1,5 @@
 import Plugin from '../../lib/Plugin'
+import Log from '../../lib/Log.mjs';
 
 export const VERSION = 1;
 
@@ -14,32 +15,32 @@ export default class ExamplePlugin extends Plugin {
             this.connection.send('use', [1], {mustReturnOK: true, noOutput: true}),
             this.connection.send('whoami', undefined, {mustReturnOK: true, noOutput: true})
         ]).then(data => {
-            console.log("ExamplePlugin - ", data);
+            Log(`ExamplePlugin - ${JSON.stringify(data)}`);
         }).catch(data => {
-            console.log("ExamplePlugin - Catch: ", data);
+            Log(`ExamplePlugin - Catch: ${data}`);
         });
     }
     init() {
-        console.log("We in there bois!");
+        Log("We in there bois!");
         // get clientlist and info every 5 second
         this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
     }
 
     async fetchClientInfo() {
         const clientList = await this.connection.store.fetchList('clientlist');
-        console.log(`Clients: ${clientList.length}`);
+        Log(`Clients: ${clientList.length}`);
         for (let client of clientList) {
             const data = await this.connection.store.fetchInfo('clientinfo', 'clid', client.clid);
-            console.log(`\tExamplePlugin - client (${client.clid}): ${data.client_nickname}`);
+            Log(`\tExamplePlugin - client (${client.clid}): ${data.client_nickname}`);
         }
         this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
     }
 
     reload() {
-        console.log("ExamplePlugin - Already loaded!");
+        Log("ExamplePlugin - Already loaded!");
     }
     unload() {
-        console.log("ExamplePlugin - Unloading...");
+        Log("ExamplePlugin - Unloading...");
         clearTimeout(this.fetchTimeout);
     }
 }
