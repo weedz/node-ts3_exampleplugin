@@ -1,15 +1,17 @@
 import Plugin from '../../lib/Plugin'
-import Log from '../../lib/Log.mjs';
+import Log from '../../lib/Log';
 
 export const VERSION = 1;
 
 export default class ExamplePlugin extends Plugin {
+    fetchTimeout: NodeJS.Timeout
+
     constructor() {
-        super();
+        super(null);
         this.fetchTimeout;
         this.fetchClientInfo = this.fetchClientInfo.bind(this);
     }
-    connected(connection) {
+    connected() {
         Promise.all([
             this.connection.send('use', [1], {mustReturnOK: true, noOutput: true}),
             this.connection.send('whoami', undefined, {mustReturnOK: true, noOutput: true})
@@ -20,7 +22,7 @@ export default class ExamplePlugin extends Plugin {
         });
     }
     init() {
-        Log("We in there bois!");
+        Log("We in there bois!", this.constructor.name, 3);
         // get clientlist and info every 5 second
         this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
     }
