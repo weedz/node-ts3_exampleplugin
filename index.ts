@@ -1,3 +1,4 @@
+/// <reference path="../../lib/Types/TeamSpeak.d.ts" />
 import Plugin from '../../lib/Plugin'
 import Log from '../../lib/Log';
 import Connection from '../../lib/Connection';
