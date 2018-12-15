@@ -16,8 +16,8 @@ export default class ExamplePlugin extends Plugin {
     }
     connected = () => {
         Promise.all([
-            this.connection.send("use", [1], {mustReturnOK: true, noOutput: true}),
-            this.connection.send("whoami", undefined, {mustReturnOK: true, noOutput: true})
+            this.connection.send("use", 1, {mustReturnOK: true, noOutput: true}),
+            this.connection.send("whoami", null, {mustReturnOK: true, noOutput: true})
         ]).then(data => {
             Log(`ExamplePlugin - ${JSON.stringify(data)}`, this.constructor.name);
         }).catch(data => {
@@ -31,11 +31,10 @@ export default class ExamplePlugin extends Plugin {
     }
 
     async fetchClientInfo() {
-        const clientList = await this.connection.store.fetchList<TS_ClientList>("clientlist");
+        const clientList:TS_ClientList = await this.connection.store.fetchList("clientlist");
         Log(`Clients: ${clientList.length}`, this.constructor.name);
         for (let client of clientList) {
-            console.log(client.clid);
-            const data = await this.connection.store.fetchItem<TS_ClientInfo>("clientinfo", client.clid);
+            const data:TS_ClientInfo = await this.connection.store.fetchItem("clientinfo", client.clid);
             process.stdout.write(`\tExamplePlugin - client (${client.clid}): ${data.client_nickname}\n`);
         }
         this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
