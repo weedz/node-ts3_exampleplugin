@@ -4,12 +4,10 @@ import Log from '../../lib/Log';
 import Connection from '../../lib/Connection';
 import Client from '../../lib/Client';
 
-export const VERSION = 1;
-
 export default class ExamplePlugin extends Plugin {
     fetchTimeout: NodeJS.Timeout|undefined;
 
-    constructor(connection: Connection, client: Client) {
+    constructor({ connection, client }: { connection: Connection, client: Client}) {
         super(connection, client);
         this.fetchTimeout;
         this.fetchClientInfo = this.fetchClientInfo.bind(this);
