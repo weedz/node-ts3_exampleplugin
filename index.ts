@@ -1,18 +1,11 @@
-/// <reference path="../../lib/Types/TeamSpeak.d.ts" />
 import Plugin from '../../lib/Plugin'
 import Log from '../../lib/Log';
-import Connection from '../../lib/Connection';
-import Client from '../../lib/Client';
+import { TS_ClientList, TS_ClientInfo } from '../../lib/Types/TeamSpeak';
 
 export default class ExamplePlugin extends Plugin {
     fetchTimeout: NodeJS.Timeout|undefined;
 
-    constructor({ connection, client }: { connection: Connection, client: Client}) {
-        super(connection, client);
-        this.fetchTimeout;
-        this.fetchClientInfo = this.fetchClientInfo.bind(this);
-    }
-    connected = () => {
+    connected() {
         Promise.all([
             this.connection.send("use", 1, {mustReturnOK: true, noOutput: true}),
             this.connection.send("whoami", null, {mustReturnOK: true, noOutput: true})
@@ -22,13 +15,13 @@ export default class ExamplePlugin extends Plugin {
             Log(`ExamplePlugin - Catch: ${data}`, this.constructor.name);
         });
     }
-    init = () => {
+    init() {
         Log("We in there bois!", this.constructor.name, 3);
         // get clientlist and info every 5 second
         this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
     }
 
-    async fetchClientInfo() {
+    fetchClientInfo = async () => {
         const clientList:TS_ClientList = await this.connection.store.fetchList("clientlist");
         Log(`Clients: ${clientList.length}`, this.constructor.name);
         for (let client of clientList) {
@@ -38,10 +31,10 @@ export default class ExamplePlugin extends Plugin {
         this.fetchTimeout = setTimeout(this.fetchClientInfo, 5000);
     }
 
-    reload = () => {
+    reload() {
         Log("ExamplePlugin - Already loaded!", this.constructor.name);
     }
-    unload = () => {
+    unload() {
         Log("ExamplePlugin - Unloading...", this.constructor.name);
         if (this.fetchTimeout) {
             clearTimeout(this.fetchTimeout);
